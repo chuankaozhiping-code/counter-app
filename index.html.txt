@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <title>習慣◯日目カウンター</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      text-align: center;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 22px;
+    }
+    input {
+      padding: 10px;
+      width: 90%;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .save { background: #4CAF50; color: white; }
+    .reset { background: #f44336; color: white; }
+    .result {
+      font-size: 28px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>習慣◯日目カウンター</h1>
+
+    <input type="text" id="habitName" placeholder="習慣名（例：筋トレ）">
+    <input type="date" id="startDate">
+
+    <br>
+    <button class="save" onclick="saveHabit()">保存</button>
+
+    <div class="result" id="result"></div>
+
+    <button class="reset" onclick="resetHabit()">リセット</button>
+  </div>
+
+  <script>
+    function saveHabit() {
+      const name = document.getElementById("habitName").value;
+      const date = document.getElementById("startDate").value;
+
+      if (!name || !date) {
+        alert("習慣名と開始日を入力してください");
+        return;
+      }
+
+      localStorage.setItem("habitName", name);
+      localStorage.setItem("startDate", date);
+
+      calculateDays();
+    }
+
+    function calculateDays() {
+      const name = localStorage.getItem("habitName");
+      const startDate = localStorage.getItem("startDate");
+
+      if (!name || !startDate) return;
+
+      document.getElementById("habitName").value = name;
+      document.getElementById("startDate").value = startDate;
+
+      const start = new Date(startDate);
+      const today = new Date();
+      const diffTime = today - start;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      document.getElementById("result").innerText =
+        name + "は今日で " + diffDays + " 日目です🔥";
+    }
+
+    function resetHabit() {
+      localStorage.clear();
+      document.getElementById("habitName").value = "";
+      document.getElementById("startDate").value = "";
+      document.getElementById("result").innerText = "";
+    }
+
+    calculateDays();
+  </script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
+</script>
+</body>
+</html>
